@@ -15,6 +15,7 @@
         }
         body{
             background: #181818;
+            background: black;
             color: white;
         }
       #game-status{
@@ -28,7 +29,7 @@ font-size: 3.5vh;
     </style>
   </head>
   <body>
-    <div class="game-box"><canvas id="canvas" width="400" height="400"></canvas></div>
+    <div class="game-box"><canvas id="canvas" width="484" height="484"></canvas></div>
     <div class="game-info">
         <h1>Snake Game</h2>
         <p id="game-status"></p>
@@ -36,9 +37,14 @@ font-size: 3.5vh;
     </div>
 
     <script>
+      const query = new URLSearchParams(location.search);
       let canvas, ctx, gameControl, gameActive;
+
       // render X times per second
       let x = 8;
+      if (query.has('speed') && query.get('speed') != '') {
+          x = parseInt(query.get('speed'));
+      }
       
       const CANVAS_BORDER_COLOUR = 'white';
       const CANVAS_BACKGROUND_COLOUR = " #202020";
@@ -60,7 +66,7 @@ font-size: 3.5vh;
           // setting gameActive flag to true
           gameActive = true;
           document.getElementById("game-status").innerHTML = "<h3>Game Started</h3>";
-          document.getElementById("game-score").innerHTML = "";
+          document.getElementById("game-score").innerHTML = "<h1>Score: " + 0 + "</h1>";
           return setInterval(draw, 1000 / x);
       }
       
@@ -83,11 +89,11 @@ font-size: 3.5vh;
          document.getElementById("game-status").innerHTML = "<h2>Reloading Snake Game...</h2>";
          location.reload();
 }
-},2000)
+},10000)
       }
 
       // game world
-      let gridSize = (tileSize = 20); // 20 x 20 = 400
+      let gridSize = (tileSize = 22); // 20 x 20 = 400
       let nextX = (nextY = 0);
 
       // snake
@@ -123,6 +129,7 @@ font-size: 3.5vh;
         //snake bite apple?
         if (snakeX == appleX && snakeY == appleY) {
           tailSize++;
+          document.getElementById("game-score").innerHTML = "<h1>Score: " + tailSize + "</h1>";
 
           appleX = Math.floor(Math.random() * gridSize);
           appleY = Math.floor(Math.random() * gridSize);
@@ -174,6 +181,9 @@ font-size: 3.5vh;
       // input
       function keyDownEvent(e) {
         switch (e.keyCode) {
+          case 124:
+            startGame(x);
+            break;
           case 37:
             nextX = -1;
             nextY = 0;
